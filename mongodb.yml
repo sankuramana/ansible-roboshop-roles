@@ -1,23 +1,5 @@
-  - name: copy mongodb repo
-    ansible.builtin.copy: #module #2 spaces under module for all its parameters
-      src: mongo.repo         #parameters #parameters should maintain 2 spaces
-      dest: /etc/yum.repos.d/mongo.repo #parameters yum repos not yum repo
-
-  - name: install mondo db server
-    ansible.builtin.package:
-      state: present    #present, latest, absent
-      name: mongodb-org #mongodb-org = MongoDB’s official package (like mysql or zip)
-
-#ansible replace a word
-  - name: ansible replace a word
-    ansible.builtin.replace:
-      path: /etc/mongod.conf   #/etc/mongod.conf   not #momng.conf
-      regexp: '127.0.0.1' #which pattern should replace
-      replace:  '0.0.0.0'  # tihs has to be replaced  
-       
-#start and enable sevices of mongodb
-  - name: start and enable services
-    ansible.builtin.service:
-      name: mongod
-      state: started  #if service started if package present or latest
-      enabled: Yes            
+- name: setup mongodb server
+  hosts: mongodb
+  become: Yes
+  roles:
+  - mongodb
