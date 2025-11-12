@@ -1,4 +1,4 @@
-- name: "setup {{ componenet }} component"
+- name: "setup {{ component }} component"
   hosts: "{{ component }}"
   become: yes
   roles:
