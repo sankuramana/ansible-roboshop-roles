@@ -1,4 +1,4 @@
-- name: Playbook for roboshop component
+- name: "setup {{ componenet }} component"
   hosts: "{{ component }}"
   become: yes
   roles:
