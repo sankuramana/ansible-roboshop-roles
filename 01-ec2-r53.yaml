@@ -1,0 +1,87 @@
+- name: create ec2 and r53
+  hosts: local
+  connection: local
+  vars:
+    ami_id: ami-09c813fb71547fc4f
+    sg_id: sg-0836adfedd0b81ee5 
+    zone_id: Z0240592U12NCJ6BG5HL
+    domain_name: aws45.fun #  above all required field to cfreate an ec2 usning ansible
+
+    #instances:
+    #we can pass instances through command line
+    # - mongodb
+    # - redis
+    # - mysql
+    # - rabbitmq
+
+  tasks: 
+  - name: create an ec2-instances
+    amazon.aws.ec2_instance:        #module for to create ec2 #amazon spelling
+     name: "{{ item }}"
+     instance_type: t3.micro
+     security_group: "{{ sg_id }}"
+     image_id: "{{ ami_id }}"
+     tags:
+       name: "{{ item }}"
+    loop: "{{ instances }}"
+    register: ec2_output #capturing output and we are using it for next modules.(route 53)
+
+  # - name: print ec2_output
+  #   ansible.builtin.debug:
+  #    msg: "{{ ec2_output}}"     
+
+  # - name: print public_ip_address
+  #   ansible.builtin.debug: 
+  #     msg: "{{ item.instances[0].public_ip_address }}"  #  .instances
+   #item.instances[0] data type is list
+   #it has only 1 instance 
+   #  "ami_launch_index": 0,
+
+  #     #✅ item.instances[0] = the first instance (index 0) created by that loop item.
+  #    #when i am tring to access iteam(above line check) loop(below line) should be used
+  #    #msg is for only printing
+  #   loop: "{{ ec2_output.results}}"
+
+  # - name: print private_ip_address
+  #   ansible.builtin.debug:
+  #     msg: "{{ item.instances[0].private_ip_address }}" # .instances
+  #    #when i am tring to access iteam(above line check) loop(below line) should be used
+  #    #msg is for only printing
+  #   loop: "{{ ec2_output.results}}" 
+  ####################################################################
+  #2create route53 module    
+  # inputs for route 53 is public and private ip
+  - name: create route53 record
+    amazon.aws.route53:
+     state: present
+     zone: "{{ domain_name }}" #aws45.fun
+     type: A
+     value: "{{ item.instances[0].private_ip_address }}" 
+     #Yes — the value field tells Route 53 where your traffic should go.
+      #It’s basically the destination of your domain name.
+      #You nailed it — the value field in Route 53 
+      #will contain either your public IP or private IP, based on your use case.
+     ttl: 1
+     record: "{{ item.item }}.{{domain_name }}" # item. Item contain your server name.(name.domainname)
+     overwrite: true
+    loop: "{{ ec2_output.results }}"  
+
+#aws ec2 describe-instances --filters
+# "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].InstanceId" --output text | wc -w
+
+
+  # we are creating one record with public only for frontend
+  - name: create route53 record for frontend
+    amazon.aws.route53:
+      state: present
+      zone: "{{ domain_name }}"
+      record: "{{ domain_name }}" # aws45.fun
+      type: A
+      ttl: 1
+      value: "{{ item.instances[0].public_ip_address }}"
+      overwrite: true
+    when: item.item == "frontend"  ##when iteam is fronend 
+    loop: "{{ ec2_output.results }}"
+
+
+  #
