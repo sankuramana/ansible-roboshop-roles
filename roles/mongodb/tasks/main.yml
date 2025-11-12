@@ -1,5 +1,5 @@
   - name: copy mongodb repo
-    ansible.builtin.copy: #module #2 spaces under module for all its parameters
+    ansible.builtin.copy:  #module #2 spaces under module for all its parameters
       src: mongo.repo         #parameters #parameters should maintain 2 spaces
       dest: /etc/yum.repos.d/mongo.repo #parameters yum repos not yum repo
 
