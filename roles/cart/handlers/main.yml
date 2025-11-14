@@ -1,0 +1,4 @@
+- name: deamon reload
+#systemctl deamon-reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true

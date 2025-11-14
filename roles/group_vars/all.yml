@@ -1,0 +1,10 @@
+MONGODB_HOST: mongodb.aws45.fun
+REDIS_HOST: redis.aws45.fun
+CATALOGUE_HOST: catalogue.aws45.fun
+CART_HOST: cart.aws45.fun
+USER_HOST: user.aws45.fun
+RABBITMQ_HOST: rabbitmq.aws45.fun
+MYSQL_HOST: mysql.aws45.fun
+SHIPPING_HOST: shipping.aws45.fun
+PAYMENT_HOST: payment.aws45.fun
+### used for all components
