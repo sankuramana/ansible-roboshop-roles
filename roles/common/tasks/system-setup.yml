@@ -4,7 +4,7 @@
     dest: /etc/systemd/system/"{{ component }}".service #remote server
   notify: daemon reaload  
 
-- name: start the service:
+- name: start the service
   ansible.builtin.service:
     name: "{{ component }}"
     state: restarted
