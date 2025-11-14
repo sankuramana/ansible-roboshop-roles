@@ -1,8 +1,8 @@
 - name: copy "{{ component }}" service
   ansible.builtin.template: #inctead of copy used templates
     src: "{{ component }}.service.j2" 
-    dest: /etc/systemd/system/"{{ component }}".service #remote server
-  notify: daemon reload  
+    dest: /etc/systemd/system/"{{ component }}.service" #remote server
+  notify: daemon reload 
 
 - name: start the service
   ansible.builtin.service:
